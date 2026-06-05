@@ -1,9 +1,21 @@
-Replace placeholder files for all RISE, EIRM, and DR agents. Follow director.md structure:
+Check if textual is installed by running: python3 -c "import textual; print(textual.__version__)"
 
-/mnt/d/mrrobot/.claude/agents/rise/rise.md — Risk Management for Information Security and Education. Owns NIST CSF 2.0 Governance and Identification functions, enterprise risk register, Tier 1 and Tier 2 risk assessments, security awareness and training. Challenges: inherent risk not quantified, residual risk not defined after controls applied, finding not in functional risk register so no owner and no treatment plan, affected users not trained on this control so effectiveness is theoretical. Every proposal gets: inherent risk rating, current controls, residual risk rating, treatment plan. Emoji: ⚖️
+If not installed run: pip install textual --break-system-packages
 
-/mnt/d/mrrobot/.claude/agents/rise/eirm-drc.md — Digital Risk Compliance and Awareness. Owns enterprise IT policies standards and guidelines, regulatory compliance monitoring for NYDFS PCI NIST MAR, controls repository, electronic evidence preservation for litigation. The most policy-precise agent — uses /policy mid-discussion to retrieve exact policy text before citing it. Challenges: enterprise policy section directly violated and exception not formally documented, regulatory exam cycle makes this a live audit risk, evidence artifact does not exist so this cannot be proven compliant, controls repository has no mapped control for this process. Emoji: 📜
+Then create /mnt/d/mrrobot/ui/app.py — a Python Textual TUI application with these specs:
 
-/mnt/d/mrrobot/.claude/agents/rise/enterprise-dr.md — Digital Resilience. Owns IT and IS disaster recovery, NIST CSF 2.0 PCI DSS 4.0 NYDFS MAR alignment for DR, recovery exercises, BC and DR plan governance. Challenges: RTO for this component not defined so business impact is unknown, DR plan does not cover this failure mode, last recovery exercise showed a gap that this change touches, NYDFS Section 500.16 requires tested IR plan and this failure mode has no runbook. Asks of every change: if this fails in production at 2am, what is the recovery procedure, who executes it, and has it been tested. Emoji: 🔄
+Two tabs: Orchestrator and Health Map.
 
-Copy all three to ~/.claude/agents/rise/ and confirm. Then list all agent files across all directories to confirm the complete roster is in place.
+Orchestrator tab uses three-column grid layout:
+Left column: agent roster showing emoji plus name plus org plus status dot colored green active amber busy gray idle. Group by org with section headers ICS MCP CTD Special Data. Show vote chip inline when agent has voted.
+Center column: scrollable chat thread. Messages appear as bordered panels with agent emoji name org in header. Right-aligned panels for user and Claude Code messages. Left-aligned for agents MCPs and DB. Vote chips 🔴🟡🟢 inline. Tool call results shown as indented blocks with ◆ GTI ◈ Policy ⛁ DB prefixes. Auto-scrolls to latest message.
+Right column: vote tracker with three progress bars labeled APPROVE CONDITIONAL REJECT using block characters, intelligence panel showing GTI status and SQLite pattern matches, open findings list, round indicator, token counter.
+
+Health Map tab: scrollable panel showing all 14 IAM tools grouped by domain. Each tool shows: emoji health percentage as ASCII progress bar colored by threshold green above 65 amber 40 to 65 red below 40, gap count badge, feature coverage summary. Datadog panel in corner showing server metrics read from iam_insights if available. Policy coverage bars for I&A and access control policies.
+
+App reads state from /mnt/d/mrrobot/ui/state.json updated by Claude Code hooks. Starts with empty state and populates as session runs.
+
+Also create /mnt/d/mrrobot/ui/state.json with empty initial structure matching the app schema.
+Also create /mnt/d/mrrobot/ui/start.sh that activates the app.
+
+Save all files and show import statements to confirm dependencies are met.
